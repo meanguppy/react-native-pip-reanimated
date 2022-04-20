@@ -11,6 +11,7 @@ import Animated, {
   withTiming,
   runOnJS,
   WithSpringConfig,
+  Easing,
 } from 'react-native-reanimated';
 import {
   PanGestureHandler,
@@ -47,11 +48,12 @@ type PictureInPictureViewProps = {
     left: EdgeConfig;
     right: EdgeConfig;
   };
-  initialX: number;
-  initialY: number;
-  deceleration: number;
-  minimumGlideVelocity: number;
-  destroyOverlayColor: string;
+  initialX?: number;
+  initialY?: number;
+  deceleration?: number;
+  minimumGlideVelocity?: number;
+  scaleDuringDrag?: number;
+  destroyOverlayColor?: string;
   onDestroy: () => void;
   style?: StyleProp<ViewStyle>;
   children?: React.ReactNode;
@@ -66,13 +68,16 @@ const styles = StyleSheet.create({
   },
 });
 
+const DEFAULT_OVERLAY_COLOR = 'rgba(255,0,0,0.5)';
+
 function PictureInPictureView({
   edgeConfig,
-  initialX,
-  initialY,
-  deceleration,
-  minimumGlideVelocity,
-  destroyOverlayColor,
+  initialX = 0,
+  initialY = 0,
+  deceleration = 0.985,
+  minimumGlideVelocity = 120,
+  scaleDuringDrag = 1.02,
+  destroyOverlayColor = DEFAULT_OVERLAY_COLOR,
   onDestroy,
   style,
   children,
@@ -213,10 +218,9 @@ function PictureInPictureView({
           translateX.value = withDecay({ velocity: vx, deceleration: 1 });
         if (destroyByFling.axis.includes('y'))
           translateY.value = withDecay({ velocity: vy, deceleration: 1 });
-        if (destroyByFling.fadeDuration !== undefined)
-          fadeOpacity.value = withTiming(0, {
-            duration: destroyByFling.fadeDuration,
-          });
+        fadeOpacity.value = withTiming(0, {
+          duration: destroyByFling.fadeDuration,
+        });
         return;
       }
 
@@ -281,17 +285,18 @@ function PictureInPictureView({
         x + bw * (1 - Math.pow(resistRight, Math.min(right, 1)) - right)
       );
     }
-    //const s = dragging.value ? 1.025 : 1;
+    const scale = scaleDuringDrag && dragging.value ? scaleDuringDrag : 1;
     return {
+      top: y,
+      left: x,
       opacity: opacity.value,
       transform: [
-        //{ translateX: -boxWidth.value / 2 },
-        //{ translateY: -boxHeight.value / 2 },
-        //{ scale: s },
-        //{ translateX: (x + boxWidth.value / 2) / s },
-        //{ translateY: (y + boxHeight.value / 2) / s },
-        { translateX: x },
-        { translateY: y },
+        {
+          scale: withTiming(scale, {
+            duration: 120,
+            easing: Easing.bezier(0, 0, 0.1, 1),
+          }),
+        },
       ],
     };
   });
@@ -346,6 +351,8 @@ PictureInPictureView.defaultProps = {
   initialY: 0,
   deceleration: 0.985,
   minimumGlideVelocity: 120,
+  scaleDuringDrag: 1.02,
+  destroyOverlayColor: DEFAULT_OVERLAY_COLOR,
   onDestroy: () => {},
 };
 

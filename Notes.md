@@ -3,14 +3,17 @@
 ### Props
 ```javascript
   // if the view was flung with some velocity, let it glide
-  minimumGlideVelocity: number;
+  minimumGlideVelocity?: number;
 
   // determines how much the view can glide
-  deceleration: number;
+  deceleration?: number;
+
+  // scale view by factor while dragging
+  scaleDuringDrag?: number;
 
   // if using dragToDestroy, set an overlay color to display when the view
   // is far enough out-of-bounds to be destroyed (optional)
-  destroyOverlayColor: string;
+  destroyOverlayColor?: string;
 
   // separate configuration for each edge, see below.
   edgeConfig: {

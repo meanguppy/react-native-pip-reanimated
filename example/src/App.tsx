@@ -96,9 +96,10 @@ function App() {
           edgeConfig={EDGE_CONFIG}
           initialX={10}
           initialY={10}
-          minimumGlideVelocity={120}
-          destroyOverlayColor="rgba(255,0,0,0.5)"
           deceleration={0.985}
+          minimumGlideVelocity={120}
+          scaleDuringDrag={1.02}
+          destroyOverlayColor="rgba(255,0,0,0.5)"
           onDestroy={onDestroy}
           style={styles.floating}
         >
