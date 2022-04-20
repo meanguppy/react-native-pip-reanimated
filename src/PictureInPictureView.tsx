@@ -203,8 +203,8 @@ function PictureInPictureView({
         return null;
       }
       const destroyByFling =
-        (vx > 0 && canDestroyByFling('left', angle)) ||
-        (vx < 0 && canDestroyByFling('right', angle)) ||
+        (vx < 0 && canDestroyByFling('left', angle)) ||
+        (vx > 0 && canDestroyByFling('right', angle)) ||
         (vy < 0 && canDestroyByFling('top', Math.PI / 2 - angle)) ||
         (vy > 0 && canDestroyByFling('bottom', Math.PI / 2 - angle));
       if (destroyByFling) {
@@ -281,15 +281,15 @@ function PictureInPictureView({
         x + bw * (1 - Math.pow(resistRight, Math.min(right, 1)) - right)
       );
     }
+    //const s = dragging.value ? 1.025 : 1;
     return {
       opacity: opacity.value,
       transform: [
         //{ translateX: -boxWidth.value / 2 },
         //{ translateY: -boxHeight.value / 2 },
-        //{ scale: withTiming(dragging.value ? 1.025 : 1.0, {
-        //    duration: 100,
-        //  }),
-        //},
+        //{ scale: s },
+        //{ translateX: (x + boxWidth.value / 2) / s },
+        //{ translateY: (y + boxHeight.value / 2) / s },
         { translateX: x },
         { translateY: y },
       ],
