@@ -64,17 +64,6 @@ const styles = StyleSheet.create({
     height: '100%',
     zIndex: 1000,
   },
-  shadow: {
-    backgroundColor: 'transparent',
-    elevation: 4,
-    shadowColor: '#000',
-    shadowOpacity: 0.5,
-    shadowRadius: 6,
-    shadowOffset: {
-      width: 0,
-      height: 3,
-    },
-  },
 });
 
 function PictureInPictureView({
@@ -336,10 +325,7 @@ function PictureInPictureView({
       onLayout={onLayoutView}
     >
       <PanGestureHandler onGestureEvent={gestureHandler}>
-        <Animated.View
-          onLayout={onLayoutBox}
-          style={[styles.shadow, style, stylez]}
-        >
+        <Animated.View onLayout={onLayoutBox} style={[style, stylez]}>
           {children}
           <Animated.View
             pointerEvents="none"

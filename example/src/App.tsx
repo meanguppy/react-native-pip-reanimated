@@ -1,12 +1,13 @@
 import React, { useCallback, useState } from 'react';
-import { Button, StyleSheet, View } from 'react-native';
+import { Button, StyleSheet, SafeAreaView, Image } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { PictureInPictureView } from 'react-native-pip-reanimated';
+import img from '../image.jpg';
 
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: 'orange',
+    backgroundColor: 'white',
   },
   background: {
     flex: 1,
@@ -14,9 +15,21 @@ const styles = StyleSheet.create({
   },
   floating: {
     width: '66%',
-    backgroundColor: 'white',
+    backgroundColor: 'red',
     aspectRatio: 16 / 9,
     zIndex: 1000,
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOpacity: 0.33,
+    shadowRadius: 5,
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+  },
+  image: {
+    width: '100%',
+    height: '100%',
   },
 });
 
@@ -34,13 +47,13 @@ function App() {
   };
 
   const VERTICAL_CONFIG = {
-    margin: 4,
+    margin: 8,
     spring: SPRING_HARD,
     resistEdge: 0.8,
   };
 
   const HORIZONTAL_CONFIG = {
-    margin: 4,
+    margin: 8,
     spring: SPRING_SOFT,
     destroyByFling: {
       velocity: 2500,
@@ -73,9 +86,9 @@ function App() {
 
   return (
     <GestureHandlerRootView style={styles.root}>
-      <View style={styles.background}>
+      <SafeAreaView style={styles.background}>
         <Button title="Reset player" onPress={reset} />
-      </View>
+      </SafeAreaView>
       {!destroyed && (
         <PictureInPictureView
           edgeConfig={EDGE_CONFIG}
@@ -86,7 +99,9 @@ function App() {
           deceleration={0.985}
           onDestroy={onDestroy}
           style={styles.floating}
-        />
+        >
+          <Image style={styles.image} source={img} />
+        </PictureInPictureView>
       )}
     </GestureHandlerRootView>
   );
