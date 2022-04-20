@@ -20,47 +20,47 @@ const styles = StyleSheet.create({
   },
 });
 
-const SPRING_SOFT = {
-  stiffness: 500,
-  damping: 40,
-  mass: 0.8,
-};
-
-const SPRING_HARD = {
-  stiffness: 500,
-  damping: 15,
-  mass: 0.2,
-};
-
-const VERTICAL_CONFIG = {
-  margin: 4,
-  spring: SPRING_HARD,
-  resistEdge: 0.8,
-};
-
-const HORIZONTAL_CONFIG = {
-  margin: 4,
-  spring: SPRING_SOFT,
-  destroyByFling: {
-    velocity: 2500,
-    angle: 25 * (Math.PI / 180),
-    lockAxis: true,
-    fadeDuration: 200,
-  },
-  destroyByDrag: {
-    oobPercent: 0.5,
-    velocity: 1000,
-  },
-};
-
-const EDGE_CONFIG = {
-  top: VERTICAL_CONFIG,
-  bottom: VERTICAL_CONFIG,
-  left: HORIZONTAL_CONFIG,
-  right: HORIZONTAL_CONFIG,
-};
-
 function App() {
+  const SPRING_SOFT = {
+    stiffness: 500,
+    damping: 40,
+    mass: 0.8,
+  };
+
+  const SPRING_HARD = {
+    stiffness: 500,
+    damping: 15,
+    mass: 0.2,
+  };
+
+  const VERTICAL_CONFIG = {
+    margin: 4,
+    spring: SPRING_HARD,
+    resistEdge: 0.8,
+  };
+
+  const HORIZONTAL_CONFIG = {
+    margin: 4,
+    spring: SPRING_SOFT,
+    destroyByFling: {
+      velocity: 2500,
+      angle: 25 * (Math.PI / 180),
+      lockAxis: true,
+      fadeDuration: 200,
+    },
+    destroyByDrag: {
+      oobPercent: 0.5,
+      velocity: 1000,
+    },
+  };
+
+  const EDGE_CONFIG = {
+    top: VERTICAL_CONFIG,
+    bottom: VERTICAL_CONFIG,
+    left: HORIZONTAL_CONFIG,
+    right: HORIZONTAL_CONFIG,
+  };
+
   const [destroyed, setDestroyed] = useState(false);
 
   const onDestroy = useCallback(() => {

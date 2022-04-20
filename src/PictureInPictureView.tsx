@@ -62,11 +62,18 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: '100%',
     height: '100%',
-    //zIndex: 1000,
+    zIndex: 1000,
   },
   shadow: {
     backgroundColor: 'transparent',
     elevation: 4,
+    shadowColor: '#000',
+    shadowOpacity: 0.5,
+    shadowRadius: 6,
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
   },
 });
 
@@ -221,7 +228,6 @@ function PictureInPictureView({
           fadeOpacity.value = withTiming(0, {
             duration: destroyByFling.fadeDuration,
           });
-        dragging.value = false;
         return;
       }
 
@@ -237,7 +243,6 @@ function PictureInPictureView({
         } else {
           translateY.value = slideAway;
         }
-        dragging.value = false;
         return;
       }
 
@@ -254,6 +259,8 @@ function PictureInPictureView({
           deceleration,
         });
       }
+    },
+    onFinish: () => {
       dragging.value = false;
     },
   });
@@ -287,7 +294,16 @@ function PictureInPictureView({
     }
     return {
       opacity: opacity.value,
-      transform: [{ translateX: x }, { translateY: y }],
+      transform: [
+        //{ translateX: -boxWidth.value / 2 },
+        //{ translateY: -boxHeight.value / 2 },
+        //{ scale: withTiming(dragging.value ? 1.025 : 1.0, {
+        //    duration: 100,
+        //  }),
+        //},
+        { translateX: x },
+        { translateY: y },
+      ],
     };
   });
 
