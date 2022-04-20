@@ -15,7 +15,7 @@ const styles = StyleSheet.create({
   },
   floating: {
     width: '66%',
-    backgroundColor: 'red',
+    backgroundColor: 'transparent',
     aspectRatio: 16 / 9,
     zIndex: 1000,
     elevation: 4,
@@ -26,6 +26,8 @@ const styles = StyleSheet.create({
       width: 0,
       height: 3,
     },
+    borderRadius: 12,
+    overflow: 'hidden',
   },
   image: {
     width: '100%',
