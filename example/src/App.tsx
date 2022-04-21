@@ -1,12 +1,8 @@
 import React, { useCallback, useState } from 'react';
 import { Button, StyleSheet, SafeAreaView, Image } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import {
-  EdgeConfig,
-  PictureInPictureView,
-  PictureInPictureViewProps,
-} from 'react-native-pip-reanimated';
-import type { WithSpringConfig } from 'react-native-reanimated';
+import { PictureInPictureView } from 'react-native-pip-reanimated';
+import ExampleProps from './exampleProps';
 import img from '../image.jpg';
 
 const styles = StyleSheet.create({
@@ -18,22 +14,6 @@ const styles = StyleSheet.create({
     flex: 1,
     zIndex: 0,
   },
-  floating: {
-    width: '66%',
-    backgroundColor: 'transparent',
-    aspectRatio: 16 / 9,
-    zIndex: 1000,
-    elevation: 4,
-    shadowColor: '#000',
-    shadowOpacity: 0.33,
-    shadowRadius: 5,
-    shadowOffset: {
-      width: 0,
-      height: 3,
-    },
-    borderRadius: 12,
-    overflow: 'hidden',
-  },
   image: {
     width: '100%',
     height: '100%',
@@ -41,50 +21,8 @@ const styles = StyleSheet.create({
 });
 
 function App() {
-  const SPRING_SOFT: WithSpringConfig = {
-    stiffness: 500,
-    damping: 40,
-    mass: 0.8,
-  };
-
-  const SPRING_HARD: WithSpringConfig = {
-    stiffness: 600,
-    damping: 15,
-    mass: 0.2,
-  };
-
-  const VERTICAL_CONFIG: EdgeConfig = {
-    margin: 8,
-    spring: SPRING_HARD,
-    resistance: 0.8,
-  };
-
-  const HORIZONTAL_CONFIG: EdgeConfig = {
-    margin: 8,
-    spring: SPRING_SOFT,
-    destroyByFling: {
-      minimumVelocity: 2400,
-      maximumAngle: 30 * (Math.PI / 180),
-      lockAxis: true,
-      fadeDuration: 200,
-    },
-    destroyByDrag: {
-      minimumOutOfBounds: 0.5,
-      animateVelocity: 1000,
-    },
-  };
-
-  const EDGE_CONFIG: PictureInPictureViewProps['edgeConfig'] = {
-    top: VERTICAL_CONFIG,
-    bottom: VERTICAL_CONFIG,
-    left: HORIZONTAL_CONFIG,
-    right: HORIZONTAL_CONFIG,
-  };
-
   const [destroyed, setDestroyed] = useState(false);
-  const onDestroy = useCallback(() => {
-    setDestroyed(true);
-  }, []);
+  const onDestroy = useCallback(() => setDestroyed(true), []);
   const reset = useCallback(() => {
     setDestroyed(true);
     setTimeout(() => setDestroyed(false));
@@ -96,17 +34,7 @@ function App() {
         <Button title="Reset player" onPress={reset} />
       </SafeAreaView>
       {!destroyed && (
-        <PictureInPictureView
-          edgeConfig={EDGE_CONFIG}
-          initialX={10}
-          initialY={10}
-          deceleration={0.985}
-          minimumGlideVelocity={120}
-          scaleDuringDrag={1.02}
-          destroyOverlayColor="rgba(255,0,0,0.5)"
-          onDestroy={onDestroy}
-          style={styles.floating}
-        >
+        <PictureInPictureView {...ExampleProps} onDestroy={onDestroy}>
           <Image style={styles.image} source={img} />
         </PictureInPictureView>
       )}
