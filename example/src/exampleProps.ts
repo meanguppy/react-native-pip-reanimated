@@ -41,7 +41,7 @@ const HORIZONTAL_CONFIG: EdgeConfig = {
   destroyByFling: {
     minimumVelocity: 2400,
     maximumAngle: 30 * (Math.PI / 180),
-    lockAxis: false,
+    lockAxis: true,
     fadeDuration: 200,
   },
   destroyByDrag: {
@@ -60,7 +60,7 @@ const props: PictureInPictureViewProps = {
   },
   initialX: 10,
   initialY: 10,
-  deceleration: 0.2,
+  deceleration: 0.985,
   minimumGlideVelocity: 120,
   scaleDuringDrag: 1.02,
   destroyOverlayColor: 'rgba(255,0,0,0.5)',
