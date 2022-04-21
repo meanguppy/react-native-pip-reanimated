@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import Animated, {
   withDecay,
   withSpring,
@@ -10,54 +10,13 @@ import Animated, {
   useDerivedValue,
   withTiming,
   runOnJS,
-  WithSpringConfig,
   Easing,
 } from 'react-native-reanimated';
 import {
   PanGestureHandler,
   PanGestureHandlerGestureEvent,
 } from 'react-native-gesture-handler';
-
-type EdgeName = 'top' | 'bottom' | 'left' | 'right';
-
-type EdgeConfig = {
-  margin: number;
-  spring?: WithSpringConfig;
-  resistEdge?: number;
-  destroyByFling?: {
-    velocity: number;
-    angle: number;
-    fadeDuration: number;
-    lockAxis?: boolean;
-  };
-  destroyByDrag?: {
-    oobPercent: number;
-    velocity: number;
-  };
-};
-
-type GestureContext = {
-  startX: number;
-  startY: number;
-};
-
-type PictureInPictureViewProps = {
-  edgeConfig: {
-    top: EdgeConfig;
-    bottom: EdgeConfig;
-    left: EdgeConfig;
-    right: EdgeConfig;
-  };
-  initialX?: number;
-  initialY?: number;
-  deceleration?: number;
-  minimumGlideVelocity?: number;
-  scaleDuringDrag?: number;
-  destroyOverlayColor?: string;
-  onDestroy: () => void;
-  style?: StyleProp<ViewStyle>;
-  children?: React.ReactNode;
-};
+import type { PictureInPictureViewProps, EdgeName } from './types';
 
 const styles = StyleSheet.create({
   overlay: {
@@ -92,40 +51,31 @@ function PictureInPictureView({
   const viewWidth = useSharedValue(Infinity);
   const viewHeight = useSharedValue(Infinity);
 
-  /* Calculate percent of box that is outside each boundary */
-  const oobPercentages = useDerivedValue(() => ({
-    top: -translateY.value / boxHeight.value,
-    right:
-      (translateX.value + boxWidth.value - viewWidth.value) / boxWidth.value,
-    bottom:
-      (translateY.value + boxHeight.value - viewHeight.value) / boxHeight.value,
-    left: -translateX.value / boxWidth.value,
-  }));
-
-  /* Fade box opacity when drag-to-destroy is enabled on that edge */
-  const opacity = useDerivedValue(() => {
-    const { top, right, bottom, left } = oobPercentages.value;
-    const max = Math.max(
-      0,
-      edgeConfig.top.destroyByDrag ? top : 0,
-      edgeConfig.bottom.destroyByDrag ? bottom : 0,
-      edgeConfig.left.destroyByDrag ? left : 0,
-      edgeConfig.right.destroyByDrag ? right : 0
-    );
-    return Math.min(fadeOpacity.value, 1 - max * 0.8);
-  });
+  /* Calculate percent of box that is outside each edge */
+  function calcOutOfBoundsWith(x: number, y: number) {
+    'worklet';
+    return {
+      top: -y / boxHeight.value,
+      right: (x + boxWidth.value - viewWidth.value) / boxWidth.value,
+      bottom: (y + boxHeight.value - viewHeight.value) / boxHeight.value,
+      left: -x / boxWidth.value,
+    };
+  }
+  const outOfBounds = useDerivedValue(() =>
+    calcOutOfBoundsWith(translateX.value, translateY.value)
+  );
 
   /* Track whether the box is ready for drag-to-destroy */
   const releaseWillDestroy = useDerivedValue(() => {
     function canDestroyByDrag(edge: EdgeName) {
       const { destroyByDrag } = edgeConfig[edge];
-      const oob = oobPercentages.value[edge];
-      if (destroyByDrag && destroyByDrag.oobPercent <= oob) {
+      const oob = outOfBounds.value[edge];
+      if (destroyByDrag && destroyByDrag.minimumOutOfBounds <= oob) {
         const axis = edge === 'top' || edge === 'bottom' ? 'y' : 'x';
         const dir = edge === 'right' || edge === 'bottom' ? 1 : -1;
         return {
           axis,
-          velocity: destroyByDrag.velocity * dir,
+          velocity: destroyByDrag.animateVelocity * dir,
         };
       }
       return null;
@@ -136,6 +86,19 @@ function PictureInPictureView({
       canDestroyByDrag('top') ||
       canDestroyByDrag('bottom')
     );
+  });
+
+  /* Fade box opacity when drag-to-destroy is enabled on that edge */
+  const opacity = useDerivedValue(() => {
+    const { top, right, bottom, left } = outOfBounds.value;
+    const max = Math.max(
+      0,
+      edgeConfig.top.destroyByDrag ? top : 0,
+      edgeConfig.bottom.destroyByDrag ? bottom : 0,
+      edgeConfig.left.destroyByDrag ? left : 0,
+      edgeConfig.right.destroyByDrag ? right : 0
+    );
+    return Math.min(fadeOpacity.value, 1 - max * 0.8);
   });
 
   /* Call onDestroy when opacity hits zero */
@@ -150,7 +113,7 @@ function PictureInPictureView({
 
   /* Bounce back with spring when box is outside margins */
   useAnimatedReaction(
-    () => !dragging.value && !destroying.value && oobPercentages.value,
+    () => !dragging.value && !destroying.value && outOfBounds.value,
     (oob) => {
       if (!oob) return;
       const { top, bottom, left, right } = edgeConfig;
@@ -175,7 +138,7 @@ function PictureInPictureView({
 
   const gestureHandler = useAnimatedGestureHandler<
     PanGestureHandlerGestureEvent,
-    GestureContext
+    { startX: number; startY: number }
   >({
     onStart: (_, ctx) => {
       dragging.value = true;
@@ -183,8 +146,34 @@ function PictureInPictureView({
       ctx.startY = translateY.value;
     },
     onActive: (event, ctx) => {
-      translateX.value = ctx.startX + event.translationX;
-      translateY.value = ctx.startY + event.translationY;
+      let x = ctx.startX + event.translationX;
+      let y = ctx.startY + event.translationY;
+      /* Resist edges, prevent box from being dragged off-screen */
+      const { top, bottom, left, right } = calcOutOfBoundsWith(x, y);
+      const resistTop = edgeConfig.top.resistance;
+      const resistBottom = edgeConfig.bottom.resistance;
+      const resistLeft = edgeConfig.left.resistance;
+      const resistRight = edgeConfig.right.resistance;
+      const bh = boxHeight.value;
+      const bw = boxWidth.value;
+      if (resistTop && top > 0) {
+        y = Math.max(y, -bh * (1 - Math.pow(resistTop, Math.min(top, 1))));
+      } else if (resistBottom && bottom > 0) {
+        y = Math.min(
+          y,
+          y + bh * (1 - Math.pow(resistBottom, Math.min(bottom, 1)) - bottom)
+        );
+      }
+      if (resistLeft && left > 0) {
+        x = Math.max(x, -bw * (1 - Math.pow(resistLeft, Math.min(left, 1))));
+      } else if (resistRight && right > 0) {
+        x = Math.min(
+          x,
+          x + bw * (1 - Math.pow(resistRight, Math.min(right, 1)) - right)
+        );
+      }
+      translateX.value = x;
+      translateY.value = y;
     },
     onEnd: (event, _) => {
       const { velocityX: vx, velocityY: vy } = event;
@@ -195,8 +184,8 @@ function PictureInPictureView({
         const { destroyByFling } = edgeConfig[edge];
         if (
           destroyByFling &&
-          destroyByFling.velocity <= v &&
-          destroyByFling.angle >= orientedAngle
+          destroyByFling.minimumVelocity <= v &&
+          destroyByFling.maximumAngle >= orientedAngle
         ) {
           return {
             axis: destroyByFling.lockAxis
@@ -223,7 +212,6 @@ function PictureInPictureView({
         });
         return;
       }
-
       /* Handle destroy if dragging out of bounds */
       if (releaseWillDestroy.value) {
         destroying.value = true;
@@ -238,7 +226,6 @@ function PictureInPictureView({
         }
         return;
       }
-
       /* Otherwise, allow box to glide along screen */
       if (Math.abs(vx) > minimumGlideVelocity) {
         translateX.value = withDecay({
@@ -259,36 +246,10 @@ function PictureInPictureView({
   });
 
   const stylez = useAnimatedStyle(() => {
-    let x = translateX.value;
-    let y = translateY.value;
-    /* Resist edges, prevent box going entirely off-screen */
-    const { top, bottom, left, right } = oobPercentages.value;
-    const resistTop = edgeConfig.top.resistEdge;
-    const resistBottom = edgeConfig.bottom.resistEdge;
-    const resistLeft = edgeConfig.left.resistEdge;
-    const resistRight = edgeConfig.right.resistEdge;
-    const bh = boxHeight.value;
-    const bw = boxWidth.value;
-    if (resistTop && top > 0) {
-      y = Math.max(y, -bh * (1 - Math.pow(resistTop, Math.min(top, 1))));
-    } else if (resistBottom && bottom > 0) {
-      y = Math.min(
-        y,
-        y + bh * (1 - Math.pow(resistBottom, Math.min(bottom, 1)) - bottom)
-      );
-    }
-    if (resistLeft && left > 0) {
-      x = Math.max(x, -bw * (1 - Math.pow(resistLeft, Math.min(left, 1))));
-    } else if (resistRight && right > 0) {
-      x = Math.min(
-        x,
-        x + bw * (1 - Math.pow(resistRight, Math.min(right, 1)) - right)
-      );
-    }
     const scale = scaleDuringDrag && dragging.value ? scaleDuringDrag : 1;
     return {
-      top: y,
-      left: x,
+      top: translateY.value,
+      left: translateX.value,
       opacity: opacity.value,
       transform: [
         {
@@ -302,7 +263,7 @@ function PictureInPictureView({
   });
 
   const overlayOpacity = useAnimatedStyle(() => ({
-    opacity: withTiming(releaseWillDestroy.value ? 1 : 0, { duration: 200 }),
+    opacity: withTiming(releaseWillDestroy.value ? 1 : 0, { duration: 180 }),
   }));
 
   const onLayoutBox = useCallback(

@@ -1,7 +1,12 @@
 import React, { useCallback, useState } from 'react';
 import { Button, StyleSheet, SafeAreaView, Image } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { PictureInPictureView } from 'react-native-pip-reanimated';
+import {
+  EdgeConfig,
+  PictureInPictureView,
+  PictureInPictureViewProps,
+} from 'react-native-pip-reanimated';
+import type { WithSpringConfig } from 'react-native-reanimated';
 import img from '../image.jpg';
 
 const styles = StyleSheet.create({
@@ -36,40 +41,40 @@ const styles = StyleSheet.create({
 });
 
 function App() {
-  const SPRING_SOFT = {
+  const SPRING_SOFT: WithSpringConfig = {
     stiffness: 500,
     damping: 40,
     mass: 0.8,
   };
 
-  const SPRING_HARD = {
-    stiffness: 500,
+  const SPRING_HARD: WithSpringConfig = {
+    stiffness: 600,
     damping: 15,
     mass: 0.2,
   };
 
-  const VERTICAL_CONFIG = {
+  const VERTICAL_CONFIG: EdgeConfig = {
     margin: 8,
     spring: SPRING_HARD,
-    resistEdge: 0.8,
+    resistance: 0.8,
   };
 
-  const HORIZONTAL_CONFIG = {
+  const HORIZONTAL_CONFIG: EdgeConfig = {
     margin: 8,
     spring: SPRING_SOFT,
     destroyByFling: {
-      velocity: 2500,
-      angle: 25 * (Math.PI / 180),
+      minimumVelocity: 2400,
+      maximumAngle: 30 * (Math.PI / 180),
       lockAxis: true,
       fadeDuration: 200,
     },
     destroyByDrag: {
-      oobPercent: 0.5,
-      velocity: 1000,
+      minimumOutOfBounds: 0.5,
+      animateVelocity: 1000,
     },
   };
 
-  const EDGE_CONFIG = {
+  const EDGE_CONFIG: PictureInPictureViewProps['edgeConfig'] = {
     top: VERTICAL_CONFIG,
     bottom: VERTICAL_CONFIG,
     left: HORIZONTAL_CONFIG,
@@ -77,7 +82,6 @@ function App() {
   };
 
   const [destroyed, setDestroyed] = useState(false);
-
   const onDestroy = useCallback(() => {
     setDestroyed(true);
   }, []);
