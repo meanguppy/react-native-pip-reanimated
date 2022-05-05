@@ -141,11 +141,11 @@ function PictureInPictureView({
     { startX: number; startY: number }
   >({
     onStart: (_, ctx) => {
-      dragging.value = true;
       ctx.startX = translateX.value;
       ctx.startY = translateY.value;
     },
     onActive: (event, ctx) => {
+      dragging.value = true;
       let x = ctx.startX + event.translationX;
       let y = ctx.startY + event.translationY;
       /* Resist edges, prevent box from being dragged off-screen */
@@ -290,7 +290,7 @@ function PictureInPictureView({
       style={styles.overlay}
       onLayout={onLayoutView}
     >
-      <PanGestureHandler onGestureEvent={gestureHandler}>
+      <PanGestureHandler minDist={5} onGestureEvent={gestureHandler}>
         <Animated.View onLayout={onLayoutBox} style={[style, stylez]}>
           {children}
           <Animated.View
