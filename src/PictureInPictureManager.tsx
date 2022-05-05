@@ -8,16 +8,17 @@ type PictureInPictureManagerProps = {
   children?: React.ReactNode;
 };
 
-type PipManagerContextValue = {
+type PictureInPictureContextValue = {
   activeView: null | React.ReactNode;
-  setActiveView: React.Dispatch<React.SetStateAction<null>>;
+  setActiveView: React.Dispatch<React.SetStateAction<React.ReactNode | null>>;
 };
 
-export const PipManagerContext = React.createContext<PipManagerContextValue>({
-  activeView: null,
-  setActiveView: () => {},
-});
-PipManagerContext.displayName = 'PipManagerContext';
+export const PictureInPictureContext =
+  React.createContext<PictureInPictureContextValue>({
+    activeView: null,
+    setActiveView: () => {},
+  });
+PictureInPictureContext.displayName = 'PictureInPictureContext';
 
 const styles = StyleSheet.create({
   flex: {
@@ -36,13 +37,13 @@ function PictureInPictureManager({
       activeView,
       setActiveView,
     }),
-    [activeView]
+    [activeView, setActiveView]
   );
 
   const onDestroy = useCallback(() => setActiveView(null), []);
 
   return (
-    <PipManagerContext.Provider value={ctxValue}>
+    <PictureInPictureContext.Provider value={ctxValue}>
       <View style={styles.flex}>
         {children}
         {activeView !== null && (
@@ -51,7 +52,7 @@ function PictureInPictureManager({
           </PictureInPictureView>
         )}
       </View>
-    </PipManagerContext.Provider>
+    </PictureInPictureContext.Provider>
   );
 }
 
