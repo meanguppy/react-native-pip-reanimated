@@ -1,13 +1,13 @@
-import React, { useCallback, useRef } from 'react';
-import { StyleProp, StyleSheet, ViewStyle } from 'react-native';
+import React, { useCallback, useRef, useState } from 'react';
+import { StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
 import {
   Gesture,
   GestureDetector,
   TouchableWithoutFeedback,
 } from 'react-native-gesture-handler';
 import Animated, {
+  runOnJS,
   useAnimatedStyle,
-  useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
 
@@ -19,12 +19,10 @@ type ToggleableOverlayProps = {
 };
 
 const styles = StyleSheet.create({
-  touchable: {
+  absolute: {
     position: 'absolute',
-    width: '100%',
-    height: '100%',
   },
-  overlay: {
+  full: {
     width: '100%',
     height: '100%',
     backgroundColor: 'transparent',
@@ -37,7 +35,7 @@ function ToggleableOverlay({
   style,
   children,
 }: ToggleableOverlayProps) {
-  const opacity = useSharedValue(0);
+  const [hidden, setHidden] = useState(true);
   const timeout = useRef<null | NodeJS.Timeout>(null);
 
   /* Clear the fade timeout, and refresh if necessary */
@@ -48,42 +46,45 @@ function ToggleableOverlay({
         timeout.current = null;
       }
       if (shouldRefresh) {
-        timeout.current = setTimeout(() => {
-          opacity.value = 0;
-        }, fadeDelay);
+        timeout.current = setTimeout(() => setHidden(true), fadeDelay);
       }
     },
-    [timeout, opacity, fadeDelay]
+    [timeout, fadeDelay]
   );
 
   const toggleOverlay = useCallback(() => {
-    const newOpacity = opacity.value === 1 ? 0 : 1;
-    opacity.value = newOpacity;
-    handleTimeout(newOpacity === 1);
-  }, [opacity, handleTimeout]);
+    setHidden(!hidden);
+    handleTimeout(hidden);
+  }, [hidden, handleTimeout]);
 
   /* Gesture to spy on any taps on their way through the overlay.
      Will refresh the fade timeout when the overlay is already open. */
-  const spy = Gesture.Manual()
-    .runOnJS(true)
-    .onTouchesUp(() => {
-      handleTimeout(opacity.value === 1);
-    });
+  const spy = Gesture.Manual().onTouchesUp((_, manager) => {
+    manager.fail();
+    if (!hidden) runOnJS(handleTimeout)(true);
+  });
 
-  const stylez = useAnimatedStyle(() => ({
-    opacity: withTiming(opacity.value, { duration: fadeDuration }),
-  }));
+  const stylez = useAnimatedStyle(
+    () => ({
+      opacity: withTiming(hidden ? 0 : 1, { duration: fadeDuration }),
+    }),
+    [hidden, fadeDuration]
+  );
 
   return (
     <GestureDetector gesture={spy}>
-      <TouchableWithoutFeedback
-        containerStyle={styles.touchable}
-        onPress={toggleOverlay}
-      >
-        <Animated.View style={[styles.overlay, stylez, style]}>
-          {children}
-        </Animated.View>
-      </TouchableWithoutFeedback>
+      <View style={[styles.absolute, styles.full]}>
+        <TouchableWithoutFeedback onPress={toggleOverlay}>
+          <View collapsable={false} style={styles.full}>
+            <Animated.View
+              pointerEvents={hidden ? 'none' : 'auto'}
+              style={[style, stylez]}
+            >
+              {children}
+            </Animated.View>
+          </View>
+        </TouchableWithoutFeedback>
+      </View>
     </GestureDetector>
   );
 }
