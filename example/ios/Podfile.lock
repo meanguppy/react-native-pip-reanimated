@@ -349,7 +349,7 @@ PODS:
     - React-perflogger (= 0.68.1)
   - RNDeviceInfo (8.7.1):
     - React-Core
-  - RNGestureHandler (2.4.1):
+  - RNGestureHandler (2.4.2):
     - React-Core
   - RNReanimated (2.8.0):
     - DoubleConversion
@@ -576,7 +576,7 @@ SPEC CHECKSUMS:
   React-runtimeexecutor: 7285b499d0339104b2813a1f58ad1ada4adbd6c0
   ReactCommon: bf2888a826ceedf54b99ad1b6182d1bc4a8a3984
   RNDeviceInfo: aad3c663b25752a52bf8fce93f2354001dd185aa
-  RNGestureHandler: 4f4986408310a43f1606c391f38f76e0d6e790d5
+  RNGestureHandler: 61628a2c859172551aa2100d3e73d1e57878392f
   RNReanimated: 64573e25e078ae6bec03b891586d50b9ec284393
   SocketRocket: fccef3f9c5cedea1353a9ef6ada904fde10d6608
   Yoga: 17cd9a50243093b547c1e539c749928dd68152da
