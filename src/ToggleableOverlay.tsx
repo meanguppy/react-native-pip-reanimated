@@ -40,7 +40,7 @@ function ToggleableOverlay({
 
   /* Clear the fade timeout, and refresh if necessary */
   const handleTimeout = useCallback(
-    (shouldRefresh) => {
+    (shouldRefresh: boolean) => {
       if (timeout.current !== null) {
         clearTimeout(timeout.current);
         timeout.current = null;
@@ -72,6 +72,7 @@ function ToggleableOverlay({
   );
 
   return (
+    /* @ts-ignore:next-line: children prop should exist */
     <GestureDetector gesture={spy}>
       <View style={[styles.absolute, styles.full]}>
         <TouchableWithoutFeedback onPress={toggleOverlay}>

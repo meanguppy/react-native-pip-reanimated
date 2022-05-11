@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { LayoutChangeEvent, StyleSheet, View } from 'react-native';
 import Animated, {
   withDecay,
   withSpring,
@@ -267,7 +267,7 @@ function PictureInPictureView({
   }));
 
   const onLayoutBox = useCallback(
-    (evt) => {
+    (evt: LayoutChangeEvent) => {
       const { width, height } = evt.nativeEvent.layout;
       boxWidth.value = width;
       boxHeight.value = height;
@@ -276,7 +276,7 @@ function PictureInPictureView({
   );
 
   const onLayoutView = useCallback(
-    (evt) => {
+    (evt: LayoutChangeEvent) => {
       const { width, height } = evt.nativeEvent.layout;
       viewWidth.value = width;
       viewHeight.value = height;
@@ -290,6 +290,7 @@ function PictureInPictureView({
       style={styles.overlay}
       onLayout={onLayoutView}
     >
+      {/* @ts-ignore:next-line: children prop should exist */}
       <PanGestureHandler minDist={5} onGestureEvent={gestureHandler}>
         <Animated.View onLayout={onLayoutBox} style={[style, stylez]}>
           {children}

@@ -10,7 +10,7 @@ type PictureInPictureManagerProps = {
 
 type PictureInPictureContextValue = {
   activeView: null | React.ReactNode;
-  setActiveView: React.Dispatch<React.SetStateAction<React.ReactNode | null>>;
+  setActiveView: Function;
 };
 
 export const PictureInPictureContext =
@@ -45,12 +45,14 @@ function PictureInPictureManager({
   return (
     <PictureInPictureContext.Provider value={ctxValue}>
       <View style={styles.flex}>
-        {children}
-        {activeView !== null && (
-          <PictureInPictureView {...pipProps} onDestroy={onDestroy}>
-            {activeView}
-          </PictureInPictureView>
-        )}
+        <>
+          {children}
+          {activeView !== null && (
+            <PictureInPictureView {...pipProps} onDestroy={onDestroy}>
+              {activeView}
+            </PictureInPictureView>
+          )}
+        </>
       </View>
     </PictureInPictureContext.Provider>
   );
