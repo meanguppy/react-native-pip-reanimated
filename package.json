@@ -1,5 +1,5 @@
 {
-  "name": "@guppy/react-native-pip-reanimated",
+  "name": "react-native-pip-reanimated",
   "version": "0.1.0-alpha.1",
   "description": "PiP view for React Native via react-native-reanimated",
   "main": "lib/commonjs/index",
@@ -44,7 +44,7 @@
   },
   "homepage": "https://github.com/cboar/react-native-pip-reanimated#readme",
   "publishConfig": {
-    "registry": "https://registry.buildonce.co"
+    "registry": "https://registry.npmjs.org/"
   },
   "devDependencies": {
     "@commitlint/config-conventional": "^11.0.0",
