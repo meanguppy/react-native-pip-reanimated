@@ -1,11 +1,10 @@
 {
   "name": "react-native-pip-reanimated",
-  "version": "0.1.0",
+  "version": "0.1.0-alpha.2",
   "description": "PiP view for React Native via react-native-reanimated",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
   "types": "lib/typescript/index.d.ts",
-  "react-native": "src/index",
   "source": "src/index",
   "files": [
     "src",
@@ -36,13 +35,13 @@
     "ios",
     "android"
   ],
-  "repository": "https://github.com/cboar/react-native-pip-reanimated",
-  "author": "Joel Nuesch <jnuesch@protonmail.com> (https://github.com/cboar)",
+  "repository": "https://github.com/meanguppy/react-native-pip-reanimated",
+  "author": "Joel Nuesch <joel@meanguppy.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/cboar/react-native-pip-reanimated/issues"
+    "url": "https://github.com/meanguppy/react-native-pip-reanimated"
   },
-  "homepage": "https://github.com/cboar/react-native-pip-reanimated#readme",
+  "homepage": "https://github.com/meanguppy/react-native-pip-reanimated#readme",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },
