@@ -63,13 +63,13 @@ function PictureInPictureView({
   }
 
   const outOfBounds = useDerivedValue(() => {
-    'worklet';
+    'runOnJS';
     return calcOutOfBoundsWith(translateX.value, translateY.value);
   });
 
   /* Track whether the box is ready for drag-to-destroy */
   const releaseWillDestroy = useDerivedValue(() => {
-    'worklet';
+    'runOnJS';
     function canDestroyByDrag(edge: EdgeName) {
       const { destroyByDrag } = edgeConfig[edge];
       const oob = outOfBounds.value[edge];
@@ -93,7 +93,7 @@ function PictureInPictureView({
 
   /* Fade box opacity when drag-to-destroy is enabled on that edge */
   const opacity = useDerivedValue(() => {
-    'worklet';
+    'runOnJS';
     const { top, right, bottom, left } = outOfBounds.value;
     const max = Math.max(
       0,
