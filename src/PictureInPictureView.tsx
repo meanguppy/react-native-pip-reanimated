@@ -63,7 +63,7 @@ function PictureInPictureView({
   }
 
   const outOfBounds = useDerivedValue(() => {
-    'worklet';
+    'runOnJS';
     return calcOutOfBoundsWith(translateX.value, translateY.value);
   });
 
