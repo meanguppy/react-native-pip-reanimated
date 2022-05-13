@@ -61,9 +61,10 @@ function PictureInPictureView({
       left: -x / boxWidth.value,
     };
   }
-  const outOfBounds = useDerivedValue(() =>
-    calcOutOfBoundsWith(translateX.value, translateY.value)
-  );
+
+  const outOfBounds = useDerivedValue(() => {
+    return calcOutOfBoundsWith(translateX.value, translateY.value);
+  });
 
   /* Track whether the box is ready for drag-to-destroy */
   const releaseWillDestroy = useDerivedValue(() => {
