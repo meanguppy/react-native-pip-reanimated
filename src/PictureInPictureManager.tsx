@@ -1,5 +1,5 @@
 import type { PictureInPictureViewProps } from './types';
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo, useRef } from 'react';
 import { StyleSheet, View } from 'react-native';
 import PictureInPictureView from './PictureInPictureView';
 
@@ -9,14 +9,16 @@ type PictureInPictureManagerProps = {
 };
 
 type PictureInPictureContextValue = {
-  activeView: null | React.ReactNode;
+  sharedData: React.MutableRefObject<undefined>;
   setActiveView: Function;
+  setOnDestroy: Function;
 };
 
 export const PictureInPictureContext =
   React.createContext<PictureInPictureContextValue>({
-    activeView: null,
+    sharedData: { current: undefined },
     setActiveView: () => {},
+    setOnDestroy: () => {},
   });
 PictureInPictureContext.displayName = 'PictureInPictureContext';
 
@@ -30,17 +32,23 @@ function PictureInPictureManager({
   pipProps,
   children,
 }: PictureInPictureManagerProps) {
+  const sharedData = useRef();
   const [activeView, setActiveView] = useState(null);
+  const [onDestroy, setOnDestroy] = useState<Function | null>(null);
 
   const ctxValue = useMemo(
     () => ({
-      activeView,
+      sharedData,
       setActiveView,
+      setOnDestroy,
     }),
-    [activeView, setActiveView]
+    []
   );
 
-  const onDestroy = useCallback(() => setActiveView(null), []);
+  const handleDestroy = useCallback(() => {
+    if (typeof onDestroy === 'function') onDestroy();
+    setActiveView(null);
+  }, [onDestroy]);
 
   return (
     <PictureInPictureContext.Provider value={ctxValue}>
@@ -48,7 +56,7 @@ function PictureInPictureManager({
         <>
           {children}
           {activeView !== null && (
-            <PictureInPictureView {...pipProps} onDestroy={onDestroy}>
+            <PictureInPictureView {...pipProps} onDestroy={handleDestroy}>
               {activeView}
             </PictureInPictureView>
           )}
