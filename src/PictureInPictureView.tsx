@@ -10,7 +10,6 @@ import Animated, {
   useDerivedValue,
   withTiming,
   runOnJS,
-  Easing,
 } from 'react-native-reanimated';
 import {
   PanGestureHandler,
@@ -20,9 +19,7 @@ import type { PictureInPictureViewProps, EdgeName } from './types';
 
 const styles = StyleSheet.create({
   overlay: {
-    position: 'absolute',
-    width: '100%',
-    height: '100%',
+    ...StyleSheet.absoluteFillObject,
     zIndex: 1000,
   },
 });
@@ -247,18 +244,20 @@ function PictureInPictureView({
   });
 
   const stylez = useAnimatedStyle(() => {
+    // @ts-ignore:next-line: keep unused var for now
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const scale = scaleDuringDrag && dragging.value ? scaleDuringDrag : 1;
     return {
-      top: translateY.value,
-      left: translateX.value,
       opacity: opacity.value,
       transform: [
-        {
-          scale: withTiming(scale, {
-            duration: 120,
-            easing: Easing.bezier(0, 0, 0.1, 1),
-          }),
-        },
+        { translateX: translateX.value },
+        { translateY: translateY.value },
+        //{
+        //  scale: withTiming(scale, {
+        //    duration: 120,
+        //    easing: Easing.bezier(0, 0, 0.1, 1),
+        //  }),
+        //},
       ],
     };
   });
@@ -298,7 +297,7 @@ function PictureInPictureView({
           <Animated.View
             pointerEvents="none"
             style={[
-              styles.overlay,
+              StyleSheet.absoluteFill,
               { backgroundColor: destroyOverlayColor },
               overlayOpacity,
             ]}
