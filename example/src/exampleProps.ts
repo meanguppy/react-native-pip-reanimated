@@ -58,11 +58,9 @@ const props: PictureInPictureViewProps = {
     left: HORIZONTAL_CONFIG,
     right: HORIZONTAL_CONFIG,
   },
-  initialX: 10,
-  initialY: 10,
+  initialPosition: 'bottom-left',
   deceleration: 0.985,
   minimumGlideVelocity: 120,
-  scaleDuringDrag: 1.02,
   destroyOverlayColor: 'rgba(255,0,0,0.5)',
   onDestroy: () => {},
 };

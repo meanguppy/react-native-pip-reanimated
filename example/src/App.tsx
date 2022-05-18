@@ -14,7 +14,7 @@ import img from '../image.jpg';
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: 'gray',
   },
   background: {
     flex: 1,
@@ -50,6 +50,7 @@ function ButtonControls() {
 
 function App() {
   const [destroyed, setDestroyed] = useState(false);
+  const [persist, setPersist] = useState(false);
   const onDestroy = useCallback(() => setDestroyed(true), []);
   const reset = useCallback(() => {
     setDestroyed(true);
@@ -60,11 +61,15 @@ function App() {
     <GestureHandlerRootView style={styles.root}>
       <SafeAreaView style={styles.background}>
         <Button title="Reset player" onPress={reset} />
+        <Button
+          title={`Persist ${persist}`}
+          onPress={() => setPersist(!persist)}
+        />
       </SafeAreaView>
       {!destroyed && (
         <PictureInPictureView {...ExampleProps} onDestroy={onDestroy}>
           <Image style={styles.image} source={img} />
-          <ToggleableOverlay style={styles.center}>
+          <ToggleableOverlay persist={persist} style={styles.center}>
             <ButtonControls />
           </ToggleableOverlay>
         </PictureInPictureView>
