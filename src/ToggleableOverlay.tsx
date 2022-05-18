@@ -104,7 +104,7 @@ function ToggleableOverlay({
 
 ToggleableOverlay.defaultProps = {
   persist: false,
-  fadeDelay: 2500,
+  fadeDelay: 3000,
   fadeDuration: 150,
 };
 

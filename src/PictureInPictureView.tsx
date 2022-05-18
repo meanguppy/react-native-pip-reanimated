@@ -317,7 +317,7 @@ function PictureInPictureView({
 }
 
 PictureInPictureView.defaultProps = {
-  initialPosition: 'top-left',
+  initialPosition: 'bottom-left',
   deceleration: 0.985,
   minimumGlideVelocity: 120,
   destroyOverlayColor: DEFAULT_OVERLAY_COLOR,
