@@ -3,6 +3,12 @@ import type { WithSpringConfig } from 'react-native-reanimated';
 
 export type EdgeName = 'top' | 'bottom' | 'left' | 'right';
 
+export type InitialPosition =
+  | 'top-left'
+  | 'top-right'
+  | 'bottom-left'
+  | 'bottom-right';
+
 export type EdgeConfig = {
   margin: number;
   spring?: WithSpringConfig;
@@ -26,8 +32,7 @@ export type PictureInPictureViewProps = {
     left: EdgeConfig;
     right: EdgeConfig;
   };
-  initialX?: number;
-  initialY?: number;
+  initialPosition?: InitialPosition;
   deceleration?: number;
   minimumGlideVelocity?: number;
   scaleDuringDrag?: number;

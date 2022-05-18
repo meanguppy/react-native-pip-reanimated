@@ -28,8 +28,7 @@ const DEFAULT_OVERLAY_COLOR = 'rgba(255,0,0,0.5)';
 
 function PictureInPictureView({
   edgeConfig,
-  initialX = 0,
-  initialY = 0,
+  initialPosition = 'bottom-left',
   deceleration = 0.985,
   minimumGlideVelocity = 120,
   scaleDuringDrag = 1.02,
@@ -40,9 +39,10 @@ function PictureInPictureView({
 }: PictureInPictureViewProps) {
   const dragging = useSharedValue(false);
   const destroying = useSharedValue(false);
-  const translateX = useSharedValue(initialX);
-  const translateY = useSharedValue(initialY);
   const fadeOpacity = useSharedValue(1.0);
+  const positioned = useSharedValue(false);
+  const translateX = useSharedValue(edgeConfig.left.margin);
+  const translateY = useSharedValue(edgeConfig.top.margin);
   const boxWidth = useSharedValue(0);
   const boxHeight = useSharedValue(0);
   const viewWidth = useSharedValue(Infinity);
@@ -106,6 +106,24 @@ function PictureInPictureView({
       if (destroying.value && val <= 0 && !!prev) {
         runOnJS(onDestroy)();
       }
+    }
+  );
+
+  /* Sets the initial position of the box, after onLayout events */
+  useAnimatedReaction(
+    () =>
+      !positioned.value && boxWidth.value !== 0 && viewWidth.value !== Infinity,
+    (val) => {
+      if (!val) return;
+      if (initialPosition.includes('bottom')) {
+        translateY.value =
+          viewHeight.value - boxHeight.value - edgeConfig.bottom.margin;
+      }
+      if (initialPosition.includes('right')) {
+        translateX.value =
+          viewWidth.value - boxWidth.value - edgeConfig.right.margin;
+      }
+      positioned.value = true;
     }
   );
 
@@ -248,7 +266,7 @@ function PictureInPictureView({
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const scale = scaleDuringDrag && dragging.value ? scaleDuringDrag : 1;
     return {
-      opacity: opacity.value,
+      opacity: positioned.value ? opacity.value : 0,
       transform: [
         { translateX: translateX.value },
         { translateY: translateY.value },
@@ -309,8 +327,7 @@ function PictureInPictureView({
 }
 
 PictureInPictureView.defaultProps = {
-  initialX: 0,
-  initialY: 0,
+  initialPosition: 'top-left',
   deceleration: 0.985,
   minimumGlideVelocity: 120,
   scaleDuringDrag: 1.02,
