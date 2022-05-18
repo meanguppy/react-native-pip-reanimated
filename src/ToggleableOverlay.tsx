@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
 import {
   Gesture,
@@ -12,6 +12,7 @@ import Animated, {
 } from 'react-native-reanimated';
 
 type ToggleableOverlayProps = {
+  persist?: boolean;
   fadeDelay?: number;
   fadeDuration?: number;
   style?: StyleProp<ViewStyle>;
@@ -30,7 +31,8 @@ const styles = StyleSheet.create({
 });
 
 function ToggleableOverlay({
-  fadeDelay = 2500,
+  persist = false,
+  fadeDelay = 3000,
   fadeDuration = 150,
   style,
   children,
@@ -45,12 +47,22 @@ function ToggleableOverlay({
         clearTimeout(timeout.current);
         timeout.current = null;
       }
-      if (shouldRefresh) {
+      if (shouldRefresh && !persist) {
         timeout.current = setTimeout(() => setHidden(true), fadeDelay);
       }
     },
-    [timeout, fadeDelay]
+    [persist, fadeDelay]
   );
+
+  useEffect(() => {
+    return () => {
+      handleTimeout(false);
+    };
+  }, [handleTimeout]);
+
+  useEffect(() => {
+    handleTimeout(!persist);
+  }, [persist, handleTimeout]);
 
   const toggleOverlay = useCallback(() => {
     setHidden(!hidden);
@@ -91,6 +103,7 @@ function ToggleableOverlay({
 }
 
 ToggleableOverlay.defaultProps = {
+  persist: false,
   fadeDelay: 2500,
   fadeDuration: 150,
 };
