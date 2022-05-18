@@ -35,7 +35,6 @@ export type PictureInPictureViewProps = {
   initialPosition?: InitialPosition;
   deceleration?: number;
   minimumGlideVelocity?: number;
-  scaleDuringDrag?: number;
   destroyOverlayColor?: string;
   onDestroy: () => void;
   style?: StyleProp<ViewStyle>;

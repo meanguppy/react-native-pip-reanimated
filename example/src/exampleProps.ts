@@ -61,7 +61,6 @@ const props: PictureInPictureViewProps = {
   initialPosition: 'bottom-left',
   deceleration: 0.985,
   minimumGlideVelocity: 120,
-  scaleDuringDrag: 1.02,
   destroyOverlayColor: 'rgba(255,0,0,0.5)',
   onDestroy: () => {},
 };

@@ -22,9 +22,6 @@ import { PictureInPictureView } from "react-native-pip-reanimated";
   // determines how much the view can glide
   deceleration?: number;
 
-  // scale view by factor while dragging
-  scaleDuringDrag?: number;
-
   // if using dragToDestroy, set an overlay color to display when the view
   // is far enough out-of-bounds to be destroyed (optional)
   destroyOverlayColor?: string;

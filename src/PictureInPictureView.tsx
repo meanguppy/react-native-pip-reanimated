@@ -31,7 +31,6 @@ function PictureInPictureView({
   initialPosition = 'bottom-left',
   deceleration = 0.985,
   minimumGlideVelocity = 120,
-  scaleDuringDrag = 1.02,
   destroyOverlayColor = DEFAULT_OVERLAY_COLOR,
   onDestroy,
   style,
@@ -262,20 +261,11 @@ function PictureInPictureView({
   });
 
   const stylez = useAnimatedStyle(() => {
-    // @ts-ignore:next-line: keep unused var for now
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const scale = scaleDuringDrag && dragging.value ? scaleDuringDrag : 1;
     return {
       opacity: positioned.value ? opacity.value : 0,
       transform: [
         { translateX: translateX.value },
         { translateY: translateY.value },
-        //{
-        //  scale: withTiming(scale, {
-        //    duration: 120,
-        //    easing: Easing.bezier(0, 0, 0.1, 1),
-        //  }),
-        //},
       ],
     };
   });
@@ -330,7 +320,6 @@ PictureInPictureView.defaultProps = {
   initialPosition: 'top-left',
   deceleration: 0.985,
   minimumGlideVelocity: 120,
-  scaleDuringDrag: 1.02,
   destroyOverlayColor: DEFAULT_OVERLAY_COLOR,
   onDestroy: () => {},
 };
