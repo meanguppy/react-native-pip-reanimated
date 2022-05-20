@@ -3,11 +3,6 @@ import React, { useState, useCallback, useMemo, useRef } from 'react';
 import { StyleSheet, View } from 'react-native';
 import PictureInPictureView from './PictureInPictureView';
 
-type PictureInPictureManagerProps = {
-  pipProps: PictureInPictureViewProps;
-  children?: React.ReactNode;
-};
-
 type PictureInPictureContextValue = {
   sharedData: React.MutableRefObject<undefined>;
   setActiveView: Function;
@@ -29,9 +24,9 @@ const styles = StyleSheet.create({
 });
 
 function PictureInPictureManager({
-  pipProps,
   children,
-}: PictureInPictureManagerProps) {
+  ...rest
+}: PictureInPictureViewProps) {
   const sharedData = useRef();
   const [activeView, setActiveView] = useState(null);
   const [onDestroy, setOnDestroy] = useState<Function | null>(null);
@@ -56,7 +51,7 @@ function PictureInPictureManager({
         <>
           {children}
           {activeView !== null && (
-            <PictureInPictureView {...pipProps} onDestroy={handleDestroy}>
+            <PictureInPictureView {...rest} onDestroy={handleDestroy}>
               {activeView}
             </PictureInPictureView>
           )}

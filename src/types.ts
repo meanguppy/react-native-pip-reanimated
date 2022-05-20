@@ -33,6 +33,8 @@ export type PictureInPictureViewProps = {
     right: EdgeConfig;
   };
   initialPosition?: InitialPosition;
+  initialInsetX?: number;
+  initialInsetY?: number;
   deceleration?: number;
   minimumGlideVelocity?: number;
   destroyOverlayColor?: string;

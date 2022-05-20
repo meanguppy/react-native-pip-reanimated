@@ -29,6 +29,8 @@ const DEFAULT_OVERLAY_COLOR = 'rgba(255,0,0,0.5)';
 function PictureInPictureView({
   edgeConfig,
   initialPosition = 'bottom-left',
+  initialInsetX,
+  initialInsetY,
   deceleration = 0.985,
   minimumGlideVelocity = 120,
   destroyOverlayColor = DEFAULT_OVERLAY_COLOR,
@@ -40,8 +42,8 @@ function PictureInPictureView({
   const destroying = useSharedValue(false);
   const fadeOpacity = useSharedValue(1.0);
   const positioned = useSharedValue(false);
-  const translateX = useSharedValue(edgeConfig.left.margin);
-  const translateY = useSharedValue(edgeConfig.top.margin);
+  const translateX = useSharedValue(initialInsetX ?? edgeConfig.left.margin);
+  const translateY = useSharedValue(initialInsetY ?? edgeConfig.top.margin);
   const boxWidth = useSharedValue(0);
   const boxHeight = useSharedValue(0);
   const viewWidth = useSharedValue(Infinity);
@@ -115,12 +117,12 @@ function PictureInPictureView({
     (val) => {
       if (!val) return;
       if (initialPosition.includes('bottom')) {
-        translateY.value =
-          viewHeight.value - boxHeight.value - edgeConfig.bottom.margin;
+        const insetY = initialInsetY ?? edgeConfig.bottom.margin;
+        translateY.value = viewHeight.value - boxHeight.value - insetY;
       }
       if (initialPosition.includes('right')) {
-        translateX.value =
-          viewWidth.value - boxWidth.value - edgeConfig.right.margin;
+        const insetX = initialInsetX ?? edgeConfig.right.margin;
+        translateX.value = viewWidth.value - boxWidth.value - insetX;
       }
       positioned.value = true;
     }
