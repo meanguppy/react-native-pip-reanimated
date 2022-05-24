@@ -25,6 +25,10 @@ import { PictureInPictureView } from "react-native-pip-reanimated";
   // the initial position in which to render the view, default bottom-left
   initialPosition?: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
 
+  // inset the initial position by this px amount from the edge, defaults to edge's margin
+  initialInsetX?: number;
+  initialInsetY?: number;
+
   // if using dragToDestroy, set an overlay color to display when the view
   // is far enough out-of-bounds to be destroyed (optional)
   destroyOverlayColor?: string;
