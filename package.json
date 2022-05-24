@@ -1,6 +1,6 @@
 {
   "name": "react-native-pip-reanimated",
-  "version": "0.1.0-beta.2",
+  "version": "0.1.0-beta.3",
   "description": "PiP view for React Native via react-native-reanimated",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
