@@ -197,7 +197,7 @@ function PictureInPictureView({
       const v = Math.sqrt(vx * vx + vy * vy);
       const angle = Math.atan(Math.abs(vy) / Math.abs(vx));
       /* Handle destroy if flinging with correct velocity and angle */
-      function canDestroyByFling(edge: EdgeName, orientedAngle: Number) {
+      function canDestroyByFling(edge: EdgeName, orientedAngle: number) {
         const { destroyByFling } = edgeConfig[edge];
         if (
           destroyByFling &&
