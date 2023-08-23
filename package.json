@@ -1,6 +1,6 @@
 {
   "name": "react-native-pip-reanimated",
-  "version": "0.1.0-beta.3",
+  "version": "1.0.0",
   "description": "PiP view for React Native via react-native-reanimated",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
@@ -70,8 +70,8 @@
   "peerDependencies": {
     "react": "*",
     "react-native": "*",
-    "react-native-gesture-handler": "*",
-    "react-native-reanimated": "*"
+    "react-native-gesture-handler": "^2.0.0",
+    "react-native-reanimated": "^2.0.0 || ^3.0.0"
   },
   "jest": {
     "preset": "react-native",
@@ -145,9 +145,5 @@
         }
       ]
     ]
-  },
-  "dependencies": {
-    "react-native-gesture-handler": "^2.4.0",
-    "react-native-reanimated": "^2.7.0"
   }
 }
